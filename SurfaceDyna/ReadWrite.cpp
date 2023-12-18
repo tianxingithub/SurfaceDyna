@@ -26,9 +26,6 @@ void ReadWrite::readData(QString filepath, QTextBrowser* display)
 
 	connect(readthread, &QThread::finished, this, &ReadWrite::finishedSlot);
 
-	
-	//Data* re = nullptr;
-// 	return re;
 }
 
 void ReadWrite::writeDataRoot(QString filepath, Data* data)
@@ -40,6 +37,12 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 		return;
 	}
 	QTextStream txtOutput(&f);
+	txtOutput.setCodec("UTF-8");
+
+	// 写入导出信息
+	QString titleInfo = u8"$# 激发仿真软件研发支撑服务平台导出k文件信息";
+	txtOutput << titleInfo << endl;
+
 
 	//! 树节点顺序
 	auto node1 = data->rootOrder;

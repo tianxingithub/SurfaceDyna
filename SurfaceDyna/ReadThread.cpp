@@ -64,8 +64,14 @@ void ReadThread::run()
 		//! 判断选项卡
 		if (str.at(0) == '*')
 		{
-			if (str == "*NODE" || str == "*ELEMENT_SOLID" || str == "*KEYWORD" || str == "*PARAMETER_DUPLICATION" )//|| str == "*END"
+			// 保存起来，导出的时候需要还原
+			if (str == "*NODE" || str == "*ELEMENT_SOLID" || str == "*KEYWORD" || str == "*PARAMETER_DUPLICATION")//|| str == "*END"
+			{
+
+
 				continue;
+
+			}
 			if (kItem != "")
 			{
 // 				kItem = QString::number(nodeStart) + kItem; // 序号+节点 1000NT_SOLID

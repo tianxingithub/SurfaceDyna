@@ -226,6 +226,7 @@ void KFileEdtitor::treeViewDoubleClickSlot()
 {
 	if (this->m_data == nullptr)
 		return;
+
 	QTreeWidgetItem* item = m_treeWidget->treeItem->currentItem();
 	QString item_text = item->text(0);
 
@@ -385,10 +386,14 @@ void KFileEdtitor::treeViewDoubleClickSlot()
 
 void KFileEdtitor::freshData()
 {
+    if (m_data == nullptr)
+        return;
+
     if (m_itemDialog == nullptr)
     {
         return;
     }
+
     //! 对话框里面的数据
     auto diaData = m_itemDialog->m_dialogMapData;
     auto krows = m_itemDialog->m_krows;
@@ -436,7 +441,6 @@ void KFileEdtitor::freshData()
 	auto item_index = m_data->rootOrder->indexOf(k);
     auto item_notes = (*m_data->rootOrder_notes)[item_index]=notes;
 
-    //m_data->rootOrder_notes->
 }
 
 
