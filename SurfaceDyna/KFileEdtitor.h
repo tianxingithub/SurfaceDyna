@@ -35,12 +35,12 @@ private:
     void getData();
 
     //! 双击树子节点弹出属性值
-    void treeViewDoubleClick();
+    void treeViewDoubleClickSlot();
     //! 在TableWidget里面显示属性
-    void treeViewClick();
+    void treeViewClickSlot();
         
     // 【测试用】
-    void funDemo();
+    void funDemoSlot();
 
 private:
     Ui::KFileEdtitorClass *ui;
@@ -48,7 +48,7 @@ private:
 
 public:
 	//! 翻译json对象
-    Translator* translator{ NULL };
+    Translator* m_translator{ NULL };
     //! itemDialog对象
 //     ItemDialog* itemdialog;
 
@@ -61,9 +61,6 @@ public:
 public:
 	//! 获取对话框数据并更新
 	void freshData();
-    //! 弹出数据
-    void showMapDialog();
-    void showPairDialog();
     //! 导出数据
     void exportData();
 	//! 显示文件的树节点信息
@@ -78,15 +75,15 @@ public:
 
 private:
     //! 文件节点树
-    TreeWidget* treeWidget{ NULL };
+    TreeWidget* m_treeWidget{ NULL };
     //! 节点树父节点
-    QHash<QString, QTreeWidgetItem*> parentNodes;
+    QHash<QString, QTreeWidgetItem*> m_parentNodes;
     //! 文本内容
-    DisplayWidget* displayWidget{ NULL };
+    DisplayWidget* m_displayWidget{ NULL };
     //! 弹出的对话框
-    ItemDialog* itemDialog{ NULL };
+    ItemDialog* m_itemDialog{ NULL };
     //! 读写文件
-    ReadWrite* fileRW{ NULL };
+    ReadWrite* m_fileRW{ NULL };
     //! 读取的数据
-    Data* data{ NULL };
+    Data* m_data{ NULL };
 };

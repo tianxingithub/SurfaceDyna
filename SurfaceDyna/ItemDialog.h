@@ -21,23 +21,26 @@ public:
 	~ItemDialog();
 
 public:
-	QPushButton* save;
-	QPushButton* cacel;
+	QPushButton* m_save;
+	QPushButton* m_cacel;
 
 	//! 对话框里面控件的QMap
-	QMap<QString, QString >* dialogMapData;
+	QMap<QString, QString >* m_dialogMapData;
 
 	//! 对话框里面控件的k
-	QList<QString>* krows;
+	QList<QString>* m_krows;
 	//! 对话框里面控件的v
-	QList<QString>* vrows;
+	QList<QString>* m_vrows;
 
-	//! 修改框里面的值
-	QList<QLineEdit*> onlyValue;
+	//! 对话框的批注信息
+	QString m_notes;
+
+// 	//! 修改框里面的值
+// 	QList<QLineEdit*> m_onlyValue;
 
 public:
 	//! 得到对话框里面控件的信息
-	void getDialogData();
+	void getDialogDataSlot();
 
 signals:
 	//! 数据保存后发送消息

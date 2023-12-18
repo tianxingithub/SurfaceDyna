@@ -18,23 +18,23 @@ KFileEdtitor::KFileEdtitor(QWidget *parent)
 {
     ui->setupUi(this);
 
-	fileRW = new ReadWrite();
-	data = nullptr;
-	itemDialog = nullptr;
+	m_fileRW = new ReadWrite();
+	m_data = nullptr;
+	m_itemDialog = nullptr;
     m_settingDialg = nullptr;
     m_settingDialg = new SettingDialog(this);
 
-    treeWidget = new TreeWidget(ui->centralWidget);
-    treeWidget->setMinimumSize(250, 600);
-    ui->verticalLayout->addWidget(treeWidget);
+    m_treeWidget = new TreeWidget(ui->centralWidget);
+    m_treeWidget->setMinimumSize(250, 600);
+    ui->verticalLayout->addWidget(m_treeWidget);
 
-    displayWidget = new DisplayWidget(ui->centralWidget);
-    displayWidget->setMinimumSize(600, 500);
-	ui->horizontalLayout->addWidget(displayWidget);
+    m_displayWidget = new DisplayWidget(ui->centralWidget);
+    m_displayWidget->setMinimumSize(600, 500);
+	ui->horizontalLayout->addWidget(m_displayWidget);
 
-    translator = nullptr;
+    m_translator = nullptr;
     auto tsPath = m_settingDialg->m_TsPath;
-    translator = new Translator(tsPath);
+    m_translator = new Translator(tsPath);
 
     addPlot();
 }
@@ -46,7 +46,7 @@ KFileEdtitor::~KFileEdtitor()
 
 void KFileEdtitor::addPlot()
 {
-	connect(fileRW, &ReadWrite::readFinishedSig, this, &KFileEdtitor::readOverSlot);
+	connect(m_fileRW, &ReadWrite::readFinishedSig, this, &KFileEdtitor::readOverSlot);
 	connect(ui->actionSetting, &QAction::triggered, this, &KFileEdtitor::settingSlot);
 	connect(ui->actionOpenDyna, &QAction::triggered, this, &KFileEdtitor::openDynaSlot);
 	connect(ui->actionDynaClose, &QAction::triggered, this, &KFileEdtitor::closeDynaSlot);
@@ -54,13 +54,13 @@ void KFileEdtitor::addPlot()
 
     connect(ui->actionOpen, &QAction::triggered, this, &KFileEdtitor::getData);
     connect(ui->actionSave, &QAction::triggered, this, &KFileEdtitor::exportData);
-    connect(treeWidget->treeItem, &QTreeWidget::doubleClicked, this, &KFileEdtitor::treeViewDoubleClick);
-    connect(treeWidget->treeItem, &QTreeWidget::clicked, this, &KFileEdtitor::treeViewClick);
+    connect(m_treeWidget->treeItem, &QTreeWidget::doubleClicked, this, &KFileEdtitor::treeViewDoubleClickSlot);
+    connect(m_treeWidget->treeItem, &QTreeWidget::clicked, this, &KFileEdtitor::treeViewClickSlot);
 
 
 }
 
-void KFileEdtitor::funDemo()
+void KFileEdtitor::funDemoSlot()
 {
     QMap<QString, QMap<QString, QString>>m;
     m.insert(QString("a"), QMap<QString, QString>());
@@ -78,17 +78,17 @@ void KFileEdtitor::getData()
     if (filepath == nullptr)
         return;
 
-    if (data)
+    if (m_data)
     {
-        delete data;
-        data = nullptr;
-        displayWidget->textDisplay->clear();
-        treeWidget->treeItem->clear();
-        treeWidget->initTree();
-        parentNodes = QHash<QString, QTreeWidgetItem*>();
+        delete m_data;
+        m_data = nullptr;
+        m_displayWidget->textDisplay->clear();
+        m_treeWidget->treeItem->clear();
+        m_treeWidget->initTree();
+        m_parentNodes = QHash<QString, QTreeWidgetItem*>();
     }
     
-    /*this->data = */fileRW->readData(filepath, displayWidget->textDisplay);
+    /*this->data = */m_fileRW->readData(filepath, m_displayWidget->textDisplay);
 //     displayItem();
 }
 
@@ -97,54 +97,54 @@ void KFileEdtitor::exportData()
 	auto obj = dynamic_cast<ReadThread*>(sender());
 	if (obj)
 	{
-		this->data = obj->data;
+		this->m_data = obj->data;
 	}
-    if (data == nullptr)
+    if (m_data == nullptr)
         return;
     QString filepath = QFileDialog::getSaveFileName(this, u8"保存K文件",
         ".",
         "k files (*.k);;all files(*.*)");
-    fileRW->writeDataRoot(filepath,data);
+    m_fileRW->writeDataRoot(filepath,m_data);
 
 }
 
 void KFileEdtitor::displayItem()
 {
-    if (data == nullptr)
+    if (m_data == nullptr)
         return;
-    treeWidget->treeItem->setRootIsDecorated(false);
-    auto parent_nodes = data->rootOrder;
+    m_treeWidget->treeItem->setRootIsDecorated(false);
+    auto parent_nodes = m_data->rootOrder;
 
-    foreach (auto s , *(data->rootOrder))
+    foreach (auto s , *(m_data->rootOrder))
     {
-        auto a = data->rootMap->value(s);
+        auto a = m_data->rootMap->value(s);
         if (a==nullptr)
             continue;
         QStringList parts = s.split("_");
         QString parentName = parts[0]; // 获取父节点名称
 
 		// 检查父节点是否已存在，如果不存在则创建
-        if (!parentNodes.contains(parentName))
+        if (!m_parentNodes.contains(parentName))
         {
-            QTreeWidgetItem* parentNode = new QTreeWidgetItem(treeWidget->root);
+            QTreeWidgetItem* parentNode = new QTreeWidgetItem(m_treeWidget->root);
             parentNode->setText(0, parentName);
             parentNode->setIcon(0, QIcon("./images/fir.png"));
-            parentNodes[parentName] = parentNode;
+            m_parentNodes[parentName] = parentNode;
         }
 
-        QTreeWidgetItem* childItem1 = new QTreeWidgetItem(parentNodes[parentName]);
+        QTreeWidgetItem* childItem1 = new QTreeWidgetItem(m_parentNodes[parentName]);
         childItem1->setIcon(0, QIcon("./images/sec.png"));
         childItem1->setText(0, s.mid(parentName.size()+1));
     }
-    treeWidget->treeItem->expandAll();  // 展开所有节点
-    treeWidget->treeItem->sortItems(0, Qt::AscendingOrder);
+    m_treeWidget->treeItem->expandAll();  // 展开所有节点
+    m_treeWidget->treeItem->sortItems(0, Qt::AscendingOrder);
 }
 
 void KFileEdtitor::readOverSlot(Data*re)
 {
     int a = 1;
 	
-    this->data = re;
+    this->m_data = re;
     displayItem();
 }
 
@@ -214,7 +214,6 @@ void KFileEdtitor::closeDynaSlot()
 
     if (m_dyna)
     {
-// 		delete m_dyna;
         
         m_dyna->closeExternalProgram();
 		m_dyna = NULL;
@@ -222,20 +221,12 @@ void KFileEdtitor::closeDynaSlot()
 
 }
 
-void KFileEdtitor::treeViewDoubleClick()
+
+void KFileEdtitor::treeViewDoubleClickSlot()
 {
-    //showMapDialog();
-    showPairDialog();
-    //freshData();
-}
-
-
-
-void KFileEdtitor::showPairDialog()
-{
-	if (this->data == nullptr)
+	if (this->m_data == nullptr)
 		return;
-	QTreeWidgetItem* item = treeWidget->treeItem->currentItem();
+	QTreeWidgetItem* item = m_treeWidget->treeItem->currentItem();
 	QString item_text = item->text(0);
 
 	if (item_text == u8"激活能量数值") return;
@@ -251,15 +242,21 @@ void KFileEdtitor::showPairDialog()
 
         // 	if (key == u8"激活能量数值") return;
         key = parent_text +"_" + key;
-        itemDialog = new ItemDialog(this);
+
+        if (m_itemDialog)
+        {
+            delete m_itemDialog;
+            m_itemDialog = NULL;
+        }
+        m_itemDialog = new ItemDialog(this);
         //(parent_text + "_" + item_text.mid(0, item_text.length() -5)));
 //         itemDialog->setWindowTitle(parent_text + "_" + item_text.mid(0, item_text.length() - 5));
-        itemDialog->setWindowTitle(key);
-        connect(itemDialog, &ItemDialog::doubleClickSig, this, &KFileEdtitor::treeViewClick);
+        m_itemDialog->setWindowTitle(key);
+        connect(m_itemDialog, &ItemDialog::doubleClickSig, this, &KFileEdtitor::treeViewClickSlot);
 
-        auto kvPair = data->rootMap->value(key);
-        auto item_index = data->rootOrder->indexOf(key);
-        auto item_notes = data->rootOrder_notes->at(item_index);
+        auto kvPair = m_data->rootMap->value(key);
+        auto item_index = m_data->rootOrder->indexOf(key);
+        auto item_notes = m_data->rootOrder_notes->at(item_index);
         qDebug() << "--------------------------" << item_notes;
         auto kRow = kvPair->first;
         auto vRow = kvPair->second;
@@ -282,8 +279,8 @@ void KFileEdtitor::showPairDialog()
                 auto k = row[i];
                 int kcount = kRow.last().size() <= 8 ? 8 : kRow.last().size();
 
-                QLabel* label = new QLabel(itemDialog);
-                QLabel* label_tr = new QLabel(itemDialog);
+                QLabel* label = new QLabel(m_itemDialog);
+                QLabel* label_tr = new QLabel(m_itemDialog);
                 py_tr_v = (rowCount + 1) * (h - 16);
                 if (rowCount == 0)
                 {
@@ -294,9 +291,9 @@ void KFileEdtitor::showPairDialog()
                     py_tr_k = rowCount * (h - 16);
                 }
                 //! 配置中文
-                if (translator->json != nullptr)
+                if (m_translator->json != nullptr)
                 {
-                    QString jLable = translator->json->value(k).toString();
+                    QString jLable = m_translator->json->value(k).toString();
                     if (jLable != "")
                     {
                         label->setText(k);
@@ -334,7 +331,7 @@ void KFileEdtitor::showPairDialog()
                 //! 把unused属性的值设置为不可修改的textBrowser
                 if (k.mid(0, 6) == "unused")
                 {
-                    QLineEdit* value = new QLineEdit(itemDialog);
+                    QLineEdit* value = new QLineEdit(m_itemDialog);
                     value->setReadOnly(true); // 设置为只读
                     value->setText(vRow[rowCount][i]);
                     value->setAlignment(Qt::AlignCenter);
@@ -342,7 +339,7 @@ void KFileEdtitor::showPairDialog()
                 }
                 else
                 {
-                    QLineEdit* value = new QLineEdit(itemDialog);
+                    QLineEdit* value = new QLineEdit(m_itemDialog);
                     value->setText(vRow[rowCount][i]);
                     value->setGeometry((w + px) * i + 45, (h + py) * rowCount + py_tr_v + 35, w, h);
                 }
@@ -360,138 +357,51 @@ void KFileEdtitor::showPairDialog()
         if (item_notes != " ")
         {
             yy += 30;
-			QTextBrowser* textBro_notes = new QTextBrowser(itemDialog); //item_notes
+			QTextEdit* textBro_notes = new QTextEdit(m_itemDialog); //item_notes
 			textBro_notes->setGeometry(45, yy - 140, 790, 80); // 设置 QTextBrowser 的位置和大小
 			textBro_notes->setPlainText(item_notes);            
         }
         else
         {
-            yy -= 60;
+            //yy -= 60;
+			yy += 30;
+			QTextEdit* textBro_notes = new QTextEdit(m_itemDialog); //item_notes
+			textBro_notes->setGeometry(45, yy - 140, 790, 80); // 设置 QTextBrowser 的位置和大小
         }
 
-        itemDialog->resize(xx, yy);
-        itemDialog->setFixedSize(xx, yy);
-        itemDialog->save->move(xx - 235, yy - 45);
-        itemDialog->save->resize(w, h);
-        itemDialog->save->setVisible(true);
-        itemDialog->cacel->move(xx - 135, yy - 45);
-        itemDialog->cacel->resize(w, h);
-        itemDialog->cacel->setVisible(true);
+        m_itemDialog->resize(xx, yy);
+        m_itemDialog->setFixedSize(xx, yy);
+        m_itemDialog->m_save->move(xx - 235, yy - 45);
+        m_itemDialog->m_save->resize(w, h);
+        m_itemDialog->m_save->setVisible(true);
+        m_itemDialog->m_cacel->move(xx - 135, yy - 45);
+        m_itemDialog->m_cacel->resize(w, h);
+        m_itemDialog->m_cacel->setVisible(true);
 
-        itemDialog->show();
+        m_itemDialog->show();
     }
 }
 
-void KFileEdtitor::showMapDialog()
-{
-    if (this->data == nullptr)
-        return;
-    QTreeWidgetItem* item = treeWidget->treeItem->currentItem();
-    QString key = item->text(0);
-    if (key == u8"激活能量数值")return;
-
-    itemDialog = new ItemDialog(this);
-    itemDialog->setWindowTitle(key);
-
-    int numCount = 0;
-    int w = 90, h = 30, px = 10, py = 40;
-
-    QMap<QString, QString>* kv = nullptr;
-    QList<QString>* attOrder = nullptr;
-
-
-    if (kv == nullptr || attOrder == nullptr)
-        return;
-
-    for each (auto k in *attOrder)
-    {
-        QLabel* label = new QLabel(itemDialog);
-        QLabel* label_tr = new QLabel(itemDialog);
-        //! 配置中文
-        if (translator != nullptr)
-        {
-            QString jLable = translator->json->value(k).toString();
-            if (jLable != "")
-            {
-                label->setText(k);
-                label_tr->setText(jLable);
-            }
-            else
-            {
-                label->setText(k);
-                label_tr->setText(k);
-            }
-        }
-        else
-        {
-            label->setText(k);
-            label_tr->setText(k);
-        }
-
-        //! 如果Lable是unused直接放在最后面
-        if (k.mid(0, 6) == "unused")
-        {
-            label->setGeometry((w + px) * (7 % 8) + 45, (h + py) * (numCount / 8), w, h);
-            label_tr->setGeometry((w + px) * (7 % 8) + 45, (h + py) * ((numCount / 8)+1), w, h);
-            numCount = numCount + (7 - (numCount % 8));
-        }
-        else
-        {
-            label->setGeometry((w + px) * (numCount % 8) + 45, (h + py) * (numCount / 8), w, h);
-            label_tr->setGeometry((w + px) * (numCount % 8) + 45, (h + py) * ((numCount / 8)+1), w, h);
-        }
-
-        //! 把unused属性的值设置为不可修改的textBrowser
-        if (k.mid(0, 6) == "unused")
-        {
-            QTextBrowser* value = new QTextBrowser(itemDialog);
-            value->setText(kv->value(k));
-            value->setAlignment(Qt::AlignCenter);
-            numCount = numCount - (7 - (numCount % 8));
-            value->setGeometry((w + px) * (7 % 8) + 45, (h + py) * ((numCount / 8)+1) + 35, w, h);
-            numCount = numCount + (7 - (numCount % 8));
-        }
-        else
-        {
-            QLineEdit* value = new QLineEdit(itemDialog);
-            value->setText(kv->value(k));
-            value->setGeometry((w + px) * (numCount % 8) + 45, (h + py) * ((numCount / 8)+1) + 35, w, h);
-        }
-        numCount++;
-    }
-
-    int xx = (w + px) * 9, yy = (h + py) * (numCount / 8 + 1) + 50;
-    // 显示节点批注
-    QTextBrowser* notes = new QTextBrowser(itemDialog);
-//     notes->setsize
-    itemDialog->resize(xx, yy);
-
-    itemDialog->save->move(xx - 240, yy - 50);
-    itemDialog->save->setVisible(true);
-    itemDialog->cacel->move(xx - 140, yy - 50);
-    itemDialog->cacel->setVisible(true);
-
-    itemDialog->show();    
-}
 
 void KFileEdtitor::freshData()
 {
-    if (itemDialog == nullptr)
+    if (m_itemDialog == nullptr)
     {
         return;
     }
     //! 对话框里面的数据
-    auto diaData = itemDialog->dialogMapData;
-    auto krows = itemDialog->krows;
-    auto vrows = itemDialog->vrows;
+    auto diaData = m_itemDialog->m_dialogMapData;
+    auto krows = m_itemDialog->m_krows;
+    auto vrows = m_itemDialog->m_vrows;
+    auto notes = m_itemDialog->m_notes;
     if (krows == nullptr)
     {
         return;
     }
     //! 对话框标题：Data的节点
-    QString k = itemDialog->windowTitle();
+    QString k = m_itemDialog->windowTitle();
     //! 得到原来的节点
-    auto oldPair = data->rootMap->value(k);
+    auto oldPair = m_data->rootMap->value(k);
     auto oldKrows = oldPair->first;
     auto oldVrows = oldPair->second;
     QList<QList<QString>> newKrows;
@@ -513,25 +423,32 @@ void KFileEdtitor::freshData()
         rk = new QList<QString>;
         rv = new QList<QString>;
     }
+
     auto a = newKrows.size(); // 翻译后的中文
     auto b = oldKrows.size(); // 翻译前的英文
 
     QPair< QList<QList<QString>>, QList<QList<QString>>>* newPair = new QPair< QList<QList<QString>>, QList<QList<QString>>>;
     newPair->first = newKrows;
     newPair->second = newVrows;
-    data->rootMap->insert(k, newPair);
+    m_data->rootMap->insert(k, newPair);
+
+    // 得到k的索引，把当前索引信息的批注赋值
+	auto item_index = m_data->rootOrder->indexOf(k);
+    auto item_notes = (*m_data->rootOrder_notes)[item_index]=notes;
+
+    //m_data->rootOrder_notes->
 }
 
 
 
-void KFileEdtitor::treeViewClick()
+void KFileEdtitor::treeViewClickSlot()
 {
     
-    if (this->data == nullptr)
+    if (this->m_data == nullptr)
         return;
 
     //! 得到当前点击的键
-    QTreeWidgetItem* item = treeWidget->treeItem->currentItem();
+    QTreeWidgetItem* item = m_treeWidget->treeItem->currentItem();
     QString item_text = item->text(0);
     if (item_text == u8"激活能量数值")return;
 
@@ -555,17 +472,17 @@ void KFileEdtitor::treeViewClick()
         model->setItem(0, 1, new QStandardItem(parent_text + "_" + item_text.mid(0, item_text.length() -5)));
 
         /* 设置表格视图数据 */
-        treeWidget->itemAttr->setModel(model);
-        treeWidget->itemAttr->verticalHeader()->hide();//不显示序号  
+        m_treeWidget->itemAttr->setModel(model);
+        m_treeWidget->itemAttr->verticalHeader()->hide();//不显示序号  
 
 		auto a = parent_text + "_" + item->text(0);
-        auto itemValue = data->rootMap->value(a);  // nullptr
+        auto itemValue = m_data->rootMap->value(a);  // nullptr
 		if (itemValue == nullptr)//|| valueOrder == nullptr
 			return;
         //auto valueOrder = data->rootOrder->value(item->text(0));
 
-        int index = data->rootOrder->indexOf(a);
-        auto itemPair = data->rootMap->value(a);
+        int index = m_data->rootOrder->indexOf(a);
+        auto itemPair = m_data->rootMap->value(a);
         auto itemK = itemPair->first;
         auto itemv = itemPair->second;
 		if (itemK.size() == 0)
@@ -591,9 +508,9 @@ void KFileEdtitor::treeViewClick()
             {
                 continue;
             }
-            if (translator->json != nullptr)
+            if (m_translator->json != nullptr)
             {
-                QString lable_tr = translator->json->value(showK[i]).toString();
+                QString lable_tr = m_translator->json->value(showK[i]).toString();
                 if (lable_tr != "")
                 {
                     model->setItem(lineCount, 0, new QStandardItem(showK[i] + "(" + lable_tr + ")"));
@@ -612,13 +529,13 @@ void KFileEdtitor::treeViewClick()
             }
             lineCount++;
         }
-        auto notes = data->rootOrder_notes->at(index);
+        auto notes = m_data->rootOrder_notes->at(index);
         model->setItem(lineCount, 0, new QStandardItem(notes));
         model->setItem(lineCount, 1, new QStandardItem());
 
-        treeWidget->itemAttr->setSpan(lineCount, 0, 1, 2);
+        m_treeWidget->itemAttr->setSpan(lineCount, 0, 1, 2);
         /* 显示 */
-        treeWidget->itemAttr->show();
+        m_treeWidget->itemAttr->show();
     }
 }
 
