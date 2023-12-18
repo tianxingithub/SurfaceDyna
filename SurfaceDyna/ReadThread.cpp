@@ -12,6 +12,8 @@ ReadThread::ReadThread(QString f, QTextBrowser* d)
 // 使用Unicode范围来判断字符是否为汉字
 bool isChineseCharacter(const QChar& character)
 {
+	if (character == "" || character == " ")
+		return false;
 	return character >= 0x4e00 && character <= 0x9fff;
 }
 
@@ -37,13 +39,8 @@ void ReadThread::run()
 	QList<QList<QString>>*v = nullptr;
 
 	
-	//! 已丢弃
-	//节点的属性信息
-	QMap<QString, QString>* itemMapOut; 
+
 	
-	//! 已丢弃
-	//节点属性的顺序
-	QList<QString>* itemOrderOut;
 
 	//! 每个节点的前缀起始
 	int nodeStart = 1000;
@@ -59,6 +56,7 @@ void ReadThread::run()
 		}
 		QByteArray line = file.readLine(); rowCount++;
 		QString str(line);
+
 		str.remove("\n");
 
 		//! 判断选项卡
@@ -80,6 +78,7 @@ void ReadThread::run()
 				itemPair->second = *v;
 				re->rootList->append(itemPair);
 				re->rootMap->insert(kItem, itemPair);
+				notes.replace(" ", "");
 				re->rootOrder_notes->append(notes);
 				nodeStart++;
 			}
@@ -103,15 +102,18 @@ void ReadThread::run()
 			qDebug() << kItem;
 			notes = " ";
 
-			itemMapOut = new QMap<QString, QString>();
-			itemOrderOut = new QList<QString>();
 		}//if
 		//! 添加选项卡属性值
 		else if (str.at(0) == '$')
 		{
-			if (isChineseCharacter(str.at(1)))// 是批注
+			if (str.size() == 1)
 			{
-				notes = notes + str.mid(1) + u8"。";
+				// 为"$"
+				continue;
+			}
+			if (isChineseCharacter(str.at(1))) // 是批注
+			{
+				notes = notes + str.mid(1);
 				display->append(QString::number(rowCount) + "  " + str);
 			}
 			else if (str.at(1) == " ")
@@ -138,14 +140,12 @@ void ReadThread::run()
 				{
 					QT_TRY
 					{
-						itemOrderOut->append(key[i + 1]);
 // 					qDebug() << key[i + 1];
 						if (key[i + 1].mid(0, 6) == "unused")
 						{
 							kk.append(key[i + 1]);
 							vv.append(" ");
 
-							itemMapOut->insert(key[i + 1], " ");
 						}
 						else
 						{
@@ -155,14 +155,12 @@ void ReadThread::run()
 								vv.append(" ");
 
 
-								itemMapOut->insert(key[i + 1], " ");
 							}
 							else
 							{
 								kk.append(key[i + 1]);
 								vv.append(value[i]);
 
-								itemMapOut->insert(key[i + 1], value[i]);
 							}
 
 						}

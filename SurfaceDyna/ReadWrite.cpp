@@ -6,6 +6,7 @@
 #include "ReadThread.h"
 #include "ReadThread.h"
 #include "KFileEdtitor.h"
+#include <QMessageBox>
 
 
 ReadWrite::ReadWrite()
@@ -56,6 +57,18 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 		auto n = n1.mid(0, n1.length() - 5);
 		txtOutput << "*"+n1.mid(0,n1.length()-5) << endl;
 		
+		// 写入节点批注
+		auto item_index = data->rootOrder->indexOf(n1);
+		auto notes = (*data->rootOrder_notes)[item_index];
+
+		notes.replace(" ", "");
+		notes.replace('\n', "\n$");
+		if (notes != "")
+		{
+			txtOutput << "$" << notes << endl;
+
+		}
+
 		//! 节点的QPair
 		auto kvpair = data->rootMap->value(n1);
 		auto krows = kvpair->first;
@@ -110,7 +123,13 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 			rcount++;
 		}
 	}
+
+	txtOutput << "*END" << endl;
+
 	f.close();
+
+	QString msg = u8"文件已导出至 "+filepath;
+	QMessageBox::information(new QDialog, u8"导出完成", msg, QMessageBox::Ok);
 }
 
 void ReadWrite::writeData(QString filepath, Data* data)
