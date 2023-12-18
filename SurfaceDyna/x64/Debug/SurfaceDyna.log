@@ -1,10 +1,3 @@
 ﻿  KFileEdtitor.cpp
-  ReadThread.cpp
-  ReadWrite.cpp
-  SettingDialog.cpp
-  main.cpp
-  moc_KFileEdtitor.cpp
-  moc_ReadThread.cpp
-  moc_SettingDialog.cpp
   SurfaceDyna.vcxproj -> E:\Repository\SurfaceDyna\x64\Debug\SurfaceDyna.exe
   SurfaceDyna.vcxproj -> E:\Repository\SurfaceDyna\x64\Debug\SurfaceDyna.pdb (Full PDB)

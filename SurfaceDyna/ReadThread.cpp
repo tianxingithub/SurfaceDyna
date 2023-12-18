@@ -113,16 +113,7 @@ void ReadThread::run()
 				QList<QString>kk;
 				QList<QString>vv;
 				display->append(QString::number(rowCount) + "  " + str);
-				// tesing
-	// 			if (rowCount == 48)
-	// 			{
-	// 				int i = 1;
-	// 			}
-	// 			if (rowCount == 62)
-	// 			{
-	// 				int i = 1;
-	// 			}
-				//end testing
+
 				str = str.simplified(); // ----------------------
 				QStringList key = str.split(" "); // 下标1开始，最后一个为unused要丢弃
 
@@ -182,16 +173,11 @@ void ReadThread::run()
 				k->append(kk);
 				v->append(vv);
 
-				re->rootMapOut->insert(kItem, itemMapOut);
-				re->orderOut->insert(kItem, itemOrderOut);
 
 			}//else if 	
 		}
 	}//end while
 
-	// 测试数据
-// 	auto tk = re->rootOrder;
-// 	auto kv1 = re->rootMap->value((*tk)[2]);
 	
 	ready = true;
 	this->data = re;

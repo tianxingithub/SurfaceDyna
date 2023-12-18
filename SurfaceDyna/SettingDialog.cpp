@@ -16,7 +16,6 @@ SettingDialog::SettingDialog(QWidget* parent /*= nullptr*/)
 	connect(ui->btnFrameName, &QPushButton::clicked, this, &SettingDialog::frameSlot);
 	QString configpath = "./setting/config.ini";
 	m_settings = new QSettings(configpath, QSettings::IniFormat);
-// 	settings = new QSettings("./setting/config.ini", QSettings::IniFormat);
 
 	freshPath();
 
@@ -32,8 +31,7 @@ SettingDialog::~SettingDialog()
 
 void SettingDialog::tsPathSlot()
 {
-// 	auto tspath = ui->editTsPath->text();
-	QString tspath = QFileDialog::getOpenFileName(// 正常加载
+	QString tspath = QFileDialog::getOpenFileName(
 		this, u8"选择翻译配置文件",
 		".",
 		"json files (*.json);;All files (*.*)");
@@ -46,8 +44,7 @@ void SettingDialog::tsPathSlot()
 
 void SettingDialog::dynaPathSlot()
 {
-// 	auto dypath = ui->editDynaPath->text();
-	QString dypath = QFileDialog::getOpenFileName(// 正常加载
+	QString dypath = QFileDialog::getOpenFileName(
 		this, u8"选择Manager文件",
 		".",
 		"exe files (*.exe);;All files (*.*)");

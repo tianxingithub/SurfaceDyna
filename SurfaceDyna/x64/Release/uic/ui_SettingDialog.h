@@ -75,6 +75,7 @@ public:
         btnClose = new QPushButton(SettingDialogClass);
         btnClose->setObjectName(QString::fromUtf8("btnClose"));
         btnClose->setGeometry(QRect(550, 240, 101, 31));
+        btnClose->setFont(font);
 
         retranslateUi(SettingDialogClass);
 

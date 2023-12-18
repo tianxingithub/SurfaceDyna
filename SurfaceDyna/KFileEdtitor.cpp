@@ -57,10 +57,6 @@ void KFileEdtitor::addPlot()
     connect(treeWidget->treeItem, &QTreeWidget::doubleClicked, this, &KFileEdtitor::treeViewDoubleClick);
     connect(treeWidget->treeItem, &QTreeWidget::clicked, this, &KFileEdtitor::treeViewClick);
 
-//     connect(ui->menuDemo, &QAction::triggered, this, &KFileEdtitor::funDemo);
-//     connect(ui->menuDemo, &QAction::triggered, new Translator(), &Translator::testSlots); // 正确
-//     connect(ui->menuDemo, &QAction::triggered, new ReadWrite(), &ReadWrite::testSlots);
-
 
 }
 
@@ -82,9 +78,6 @@ void KFileEdtitor::getData()
     if (filepath == nullptr)
         return;
 
-    //QString filepath = "C:/Users/HanShan/Downloads/Demo_86.k";
-    //QString filepath = "C:/Users/HanShan/Downloads/Demo_86_1219.k";
-    //QString filepath = "C:/Users/HanShan/Downloads/3layer_shot_root.k";
     if (data)
     {
         delete data;
@@ -406,9 +399,6 @@ void KFileEdtitor::showMapDialog()
     QMap<QString, QString>* kv = nullptr;
     QList<QString>* attOrder = nullptr;
 
-    kv = data->rootMapOut->value(key);
-    attOrder = data->orderOut->value(key);
-
 
     if (kv == nullptr || attOrder == nullptr)
         return;
@@ -568,14 +558,12 @@ void KFileEdtitor::treeViewClick()
         treeWidget->itemAttr->setModel(model);
         treeWidget->itemAttr->verticalHeader()->hide();//不显示序号  
 
-        auto a = parent_text + "_" + item->text(0);
-        auto b = data->rootMapOut;
+		auto a = parent_text + "_" + item->text(0);
         auto itemValue = data->rootMap->value(a);  // nullptr
 		if (itemValue == nullptr)//|| valueOrder == nullptr
 			return;
         //auto valueOrder = data->rootOrder->value(item->text(0));
 
-        auto itemPairOut = data->rootMap->value(a);
         int index = data->rootOrder->indexOf(a);
         auto itemPair = data->rootMap->value(a);
         auto itemK = itemPair->first;
