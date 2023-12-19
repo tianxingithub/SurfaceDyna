@@ -19,6 +19,20 @@ bool isChineseCharacter(const QChar& character)
 
 void ReadThread::run()
 {	
+	// 整体读入，数据挂在哪里呢？导出的时候需要。挂在data属性里面
+	QFile file_all(filepath);
+	if (!file_all.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qDebug() << "Failed to open input file: " << file_all.errorString();
+		// 处理 fileContent
+	}
+	QTextStream in_all(&file_all);
+	QString fileContent_all = in_all.readAll();
+	file_all.close();
+
+	QStringList fileLines = fileContent_all.split('\n'); // 方便按行写入数据
+
+
+
 	QFile file(filepath);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
@@ -26,6 +40,7 @@ void ReadThread::run()
 		//return nullptr;
 	}
 	Data*re = new Data();
+	re->setfileLines(fileLines);
 
 	QTextStream in(&file);
 	QString kItem=""; //! 上一个选项卡名字
@@ -64,24 +79,38 @@ void ReadThread::run()
 		if (str.at(0) == '*')
 		{
 			// 保存起来，导出的时候需要还原
-			if (str == "*NODE" || str == "*ELEMENT_SOLID" || str == "*KEYWORD" || str == "*PARAMETER_DUPLICATION")//|| str == "*END"
-			{
-
-
-				continue;
-
-			}
+// 			if (str == "*NODE" || str == "*ELEMENT_SOLID" || str == "*KEYWORD" || str == "*PARAMETER_DUPLICATION")//|| str == "*END"
+// 			{
+// 
+// 
+// 				continue;
+// 
+// 			}
 			if (kItem != "")
 			{
 // 				kItem = QString::number(nodeStart) + kItem; // 序号+节点 1000NT_SOLID
 				kItem = kItem + "@"+ QString::number(nodeStart); // 节点+序号 NT_SOLID@1000
 				itemPair->first = *k;
 				itemPair->second = *v;
-				re->rootList->append(itemPair);
-				re->rootMap->insert(kItem, itemPair);
-				notes.replace(" ", "");
-				re->rootOrder_notes->append(notes);
-				nodeStart++;
+
+				if ((*k).size() == 0 || (*v).size() == 0)
+				{
+					auto k8 = *k;
+					auto v8 = *v;
+					//continue;
+					re->rootOrder->removeLast();
+					re->rootOrder_lines.removeLast();
+				}
+				else
+				{
+					re->rootList->append(itemPair);
+					re->rootMap->insert(kItem, itemPair);
+					notes.replace(" ", "");
+					re->rootOrder_notes->append(notes);
+					nodeStart++;
+
+				}
+
 			}
 			if (str == "*END")
 			{

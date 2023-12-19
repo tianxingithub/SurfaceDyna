@@ -29,6 +29,15 @@ public:
 	//! 打开的文件名称
 	QString filename;
 
+private:
+	//! 读取的完整文件数据
+	 QStringList m_fileLines;
+
+public:
+	void setfileLines(const QStringList  fL) { m_fileLines = fL; }
+	QStringList  getfileLines() const { return m_fileLines; }
+
+
 public:
 	//<QString, QMap<QString, QString >*>* getRootMap
 };

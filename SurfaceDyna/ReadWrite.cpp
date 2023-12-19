@@ -44,6 +44,7 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 	QString titleInfo = u8"$# 激发仿真软件研发支撑服务平台导出k文件信息";
 	txtOutput << titleInfo << endl;
 
+	auto fileLines = data->getfileLines();
 
 	//! 树节点顺序
 	auto node1 = data->rootOrder;
@@ -76,7 +77,7 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 		if (krows.size() == 0)
 		{
 			qDebug() << "krows.size() = 0";
-			return;
+			continue;;
 		}
 			
 		int rcount = 0;
