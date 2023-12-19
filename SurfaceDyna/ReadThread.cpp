@@ -101,7 +101,6 @@ void ReadThread::run()
 			
 			str = str.simplified();
 			kItem = str.mid(1);		
-			qDebug() << kItem;
 			notes = " ";
 
 		}//if

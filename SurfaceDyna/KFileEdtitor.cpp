@@ -147,21 +147,43 @@ void KFileEdtitor::displayItem()
         auto a = m_data->rootMap->value(s);
         if (a==nullptr)
             continue;
-        QStringList parts = s.split("_");
-        QString parentName = parts[0]; // 获取父节点名称
-
-		// 检查父节点是否已存在，如果不存在则创建
-        if (!m_parentNodes.contains(parentName))
+        if (s.contains("PART@"))
         {
-            QTreeWidgetItem* parentNode = new QTreeWidgetItem(m_treeWidget->root);
-            parentNode->setText(0, parentName);
-            parentNode->setIcon(0, QIcon("./images/fir.png"));
-            m_parentNodes[parentName] = parentNode;
-        }
+            QString parentName = "PART@";
 
-        QTreeWidgetItem* childItem1 = new QTreeWidgetItem(m_parentNodes[parentName]);
-        childItem1->setIcon(0, QIcon("./images/sec.png"));
-        childItem1->setText(0, s.mid(parentName.size()+1));
+			// 检查父节点是否已存在，如果不存在则创建
+			if (!m_parentNodes.contains(parentName))
+			{
+				QTreeWidgetItem* parentNode = new QTreeWidgetItem(m_treeWidget->root);
+				parentNode->setText(0, parentName);
+				parentNode->setIcon(0, QIcon("./images/fir.png"));
+				m_parentNodes[parentName] = parentNode;
+			}
+
+			QTreeWidgetItem* childItem1 = new QTreeWidgetItem(m_parentNodes[parentName]);
+			childItem1->setIcon(0, QIcon("./images/sec.png"));
+			childItem1->setText(0, s);
+
+        }
+        else 
+        {
+			QStringList parts = s.split("_");
+			QString parentName = parts[0]; // 获取父节点名称
+
+			// 检查父节点是否已存在，如果不存在则创建
+			if (!m_parentNodes.contains(parentName))
+			{
+				QTreeWidgetItem* parentNode = new QTreeWidgetItem(m_treeWidget->root);
+				parentNode->setText(0, parentName);
+				parentNode->setIcon(0, QIcon("./images/fir.png"));
+				m_parentNodes[parentName] = parentNode;
+			}
+
+			QTreeWidgetItem* childItem1 = new QTreeWidgetItem(m_parentNodes[parentName]);
+			childItem1->setIcon(0, QIcon("./images/sec.png"));
+			childItem1->setText(0, s.mid(parentName.size() + 1));
+
+        }
     }
     m_treeWidget->treeItem->expandAll();  // 展开所有节点
     m_treeWidget->treeItem->sortItems(0, Qt::AscendingOrder);
@@ -329,6 +351,10 @@ void KFileEdtitor::treeViewDoubleClickSlot()
 
         // 	if (key == u8"激活能量数值") return;
         key = parent_text +"_" + key;
+        if (parent_text == "PART@")
+        {
+            key = item_text;
+        }
 
         if (m_itemDialog)
         {
@@ -559,13 +585,25 @@ void KFileEdtitor::treeViewClickSlot()
         /* 设置表格标题行(输入数据为QStringList类型) */
         model->setHorizontalHeaderLabels({ u8"属性", u8"值" });
         model->setItem(0, 0, new QStandardItem(u8"名字"));
-        model->setItem(0, 1, new QStandardItem(parent_text + "_" + item_text.mid(0, item_text.length() -5)));
+        if (parent_text == "PART@")
+        {
+			model->setItem(0, 1, new QStandardItem(item_text));
+        }
+        else
+        {
+			model->setItem(0, 1, new QStandardItem(parent_text + "_" + item_text.mid(0, item_text.length() - 5)));
+        }
 
         /* 设置表格视图数据 */
         m_treeWidget->itemAttr->setModel(model);
         m_treeWidget->itemAttr->verticalHeader()->hide();//不显示序号  
 
 		auto a = parent_text + "_" + item->text(0);
+        if (parent_text == "PART@")
+        {
+            a = item_text;
+        }
+
         auto itemValue = m_data->rootMap->value(a);  // nullptr
 		if (itemValue == nullptr)//|| valueOrder == nullptr
 			return;
@@ -631,6 +669,11 @@ void KFileEdtitor::treeViewClickSlot()
 
 		// 跳转到显示区域
 		auto curNode = parent_text + "_" + item_text;
+        if (parent_text == "PART@")
+        {
+            curNode = item_text;
+        }
+
 		int treeIndex = m_data->rootOrder->indexOf(curNode);
 		int textLine = m_data->rootOrder_lines[treeIndex];
         auto nodeRows = itemK.size();
