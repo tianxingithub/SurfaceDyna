@@ -141,6 +141,7 @@
     <QtMoc Include="KDyna.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="resource2.h" />
     <ClInclude Include="Translator.h" />
     <QtMoc Include="SettingDialog.h" />
     <QtMoc Include="ReadWrite.h" />
@@ -149,6 +150,12 @@
     <QtMoc Include="ItemDialog.h" />
     <QtMoc Include="DynaFrame.h" />
     <QtMoc Include="DisplayWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SurfaceDyna.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\PERACD\发布程序\kDyna\images\logo.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

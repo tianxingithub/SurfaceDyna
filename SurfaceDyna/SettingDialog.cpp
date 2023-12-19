@@ -37,7 +37,11 @@ void SettingDialog::tsPathSlot()
 		this, u8"Ñ¡Ôñ·­ÒëÅäÖÃÎÄ¼þ",
 		".",
 		"json files (*.json);;All files (*.*)");
-	if (tspath == "") return;
+	if (tspath == "")
+	{
+		return;
+	}
+
 	ui->editTsPath->setText(tspath);
 	m_settings->setValue("TsPath", tspath);
 	m_settings->sync();
@@ -52,10 +56,19 @@ void SettingDialog::dynaPathSlot()
 		"exe files (*.exe);;All files (*.*)");
 	if (dypath == "")
 	{
-		QMessageBox::information(this, u8"´íÎó", u8"Ñ¡ÔñManager.exeÊ§°Ü£¡");
+// 		QMessageBox::information(this, u8"´íÎó", u8"Ñ¡ÔñManager.exeÊ§°Ü£¡");
 
 		return;
 	}
+	auto parts = dypath.split('/');
+	auto len = parts.size();
+	if (parts[len - 1] == "SurfaceDyna.exe")
+	{
+		QMessageBox::information(this, u8"´íÎó", u8"SurfaceDyna.exe²»¿ÉÑ¡Ôñ£¡");
+
+		return;
+	}
+
 	ui->editDynaPath->setText(dypath);
 	m_settings->setValue("DynaPath", dypath);
 	m_settings->sync();

@@ -145,5 +145,18 @@
     <ClInclude Include="Translator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SurfaceDyna.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\PERACD\发布程序\kDyna\images\logo.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
