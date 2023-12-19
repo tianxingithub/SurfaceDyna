@@ -76,6 +76,10 @@ public:
 
     void menuTestSlot();
 
+    void highlightLines(QTextBrowser* textBrowser, int lineNumber, int endNumber);
+    void clearHighlightLines(QTextBrowser* textBrowser, int lineNumber, int endNumber);
+    int last_start = 1, last_end = 1;
+
 private:
     //! 文件节点树
     TreeWidget* m_treeWidget{ NULL };

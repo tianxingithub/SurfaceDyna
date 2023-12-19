@@ -47,7 +47,8 @@ void ReadThread::run()
 
 	//! 按行读取文件
 	bool isBreak = false;
-	int rowCount = 0;
+	int rowCount = 0; // key文件的行号信息
+	int browseLine = 0; // textBorwser的行号
 	while (!in.atEnd())
 	{
 		if (isBreak)
@@ -87,7 +88,7 @@ void ReadThread::run()
 				isBreak = true;
 				continue;
 			}
-			display->append(QString::number(rowCount) + "  " +str);
+			display->append(QString::number(rowCount) + "  " + str); browseLine++;
 
 			itemPair = new QPair<QList<QList<QString>>, QList<QList<QString>>>;
 			k = new QList<QList<QString>>;
@@ -96,6 +97,7 @@ void ReadThread::run()
 			//! 添加树节点顺序
 // 			re->rootOrder->append(QString::number(nodeStart) + str.mid(1));
 			re->rootOrder->append(str.mid(1)+"@"+ QString::number(nodeStart));
+			re->rootOrder_lines.append(browseLine);
 			
 			str = str.simplified();
 			kItem = str.mid(1);		
@@ -113,14 +115,14 @@ void ReadThread::run()
 			}
 			if (isChineseCharacter(str.at(1))) // 是批注
 			{
-				notes = notes + str.mid(1);
-				display->append(QString::number(rowCount) + "  " + str);
+				notes = notes + str.mid(1) +'\n';
+				display->append(QString::number(rowCount) + "  " + str); browseLine++;
 			}
 			else if (str.at(1) == " ")
 			{
 				QList<QString>kk;
 				QList<QString>vv;
-				display->append(QString::number(rowCount) + "  " + str);
+				display->append(QString::number(rowCount) + "  " + str); browseLine++;
 
 				str = str.simplified(); // ----------------------
 				QStringList key = str.split(" "); // 下标1开始，最后一个为unused要丢弃
@@ -130,7 +132,7 @@ void ReadThread::run()
 
 				QString strvalue(line);
 				strvalue.remove("\n");
-				display->append(QString::number(rowCount) + "  " + strvalue);
+				display->append(QString::number(rowCount) + "  " + strvalue); browseLine++;
 				strvalue = strvalue.simplified(); // ----------------------
 
 
@@ -182,7 +184,7 @@ void ReadThread::run()
 		}
 	}//end while
 
-	
+	display->append(" ");
 	ready = true;
 	this->data = re;
 

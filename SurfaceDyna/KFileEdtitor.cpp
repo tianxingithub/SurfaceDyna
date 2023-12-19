@@ -113,6 +113,7 @@ void KFileEdtitor::getData()
     
     /*this->data = */m_fileRW->readData(filepath, m_displayWidget->textDisplay);
 //     displayItem();
+    last_start = 1, last_end = 1;
 }
 
 void KFileEdtitor::exportData()
@@ -251,6 +252,60 @@ void KFileEdtitor::closeDynaSlot()
 void KFileEdtitor::menuTestSlot()
 {
     qDebug() << "menuSlot()";
+}
+
+void KFileEdtitor::highlightLines(QTextBrowser* textBrowser, int lineNumber, int endNumber)
+{
+    clearHighlightLines(textBrowser, last_start, last_end);
+    last_start = lineNumber;
+    last_end = endNumber;
+	// 创建一个文本格式对象
+	QTextCharFormat format;
+
+	// 设置高亮显示的背景颜色
+	format.setBackground(Qt::yellow);
+
+	// 获取文本游标
+	QTextCursor cursor = textBrowser->textCursor();
+
+	// 移动到指定行的开头
+	cursor.movePosition(QTextCursor::Start);
+	cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, lineNumber - 1);
+
+	// 移动到结束行的末尾
+	cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, endNumber - lineNumber);
+
+	// 应用文本格式到选择的多行
+	cursor.mergeCharFormat(format);
+
+	// 设置文本框的文本游标
+	textBrowser->setTextCursor(cursor);
+
+}
+
+void KFileEdtitor::clearHighlightLines(QTextBrowser* textBrowser, int lineNumber, int endNumber)
+{
+	// 创建一个文本格式对象
+	QTextCharFormat format;
+
+	// 设置高亮显示的背景颜色
+	format.setBackground(Qt::transparent);
+
+	// 获取文本游标
+	QTextCursor cursor = textBrowser->textCursor();
+
+	// 移动到指定行的开头
+	cursor.movePosition(QTextCursor::Start);
+	cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, lineNumber - 1);
+
+	// 移动到结束行的末尾
+	cursor.movePosition(QTextCursor::Down, QTextCursor::KeepAnchor, endNumber - lineNumber);
+
+	// 应用文本格式到选择的多行
+	cursor.mergeCharFormat(format);
+
+	// 设置文本框的文本游标
+	textBrowser->setTextCursor(cursor);
 }
 
 void KFileEdtitor::treeViewDoubleClickSlot()
@@ -569,8 +624,29 @@ void KFileEdtitor::treeViewClickSlot()
         model->setItem(lineCount, 1, new QStandardItem());
 
         m_treeWidget->itemAttr->setSpan(lineCount, 0, 1, 2);
+        m_treeWidget->itemAttr->resizeRowToContents(lineCount);
         /* 显示 */
         m_treeWidget->itemAttr->show();
+
+
+		// 跳转到显示区域
+		auto curNode = parent_text + "_" + item_text;
+		int treeIndex = m_data->rootOrder->indexOf(curNode);
+		int textLine = m_data->rootOrder_lines[treeIndex];
+        auto nodeRows = itemK.size();
+
+        int notesLine = 0;
+        if (notes != "") notesLine = notes.split('\n').size();
+        else notesLine = 1;
+
+        int endNumber = textLine + 2*nodeRows + notesLine;
+
+
+
+
+        highlightLines(m_displayWidget->textDisplay, textLine, endNumber);
     }
+
+
 }
 

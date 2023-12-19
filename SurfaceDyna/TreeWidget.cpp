@@ -17,6 +17,7 @@ TreeWidget::TreeWidget(QWidget *parent)
 	itemAttr->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	itemAttr->setWordWrap(true);
 	itemAttr->setTextElideMode(Qt::ElideNone);
+	itemAttr->resizeRowsToContents();
 
 	QVBoxLayout* layout = new QVBoxLayout();
 	layout->addWidget(splitter);

@@ -1,23 +1,33 @@
-﻿cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+﻿  uic KDyna.ui
+  uic KFileEdtitor.ui
+  moc KDyna.h
+  moc SettingDialog.h
+  moc KFileEdtitor.h
+  moc ItemDialog.h
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
-  Data.cpp
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+  ItemDialog.cpp
+cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+  KDyna.cpp
   KFileEdtitor.cpp
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
-cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+  main.cpp
   ReadThread.cpp
   ReadWrite.cpp
   SettingDialog.cpp
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
-  main.cpp
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
 cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
-  moc_KFileEdtitor.cpp
   moc_ReadThread.cpp
-  moc_ReadWrite.cpp
-cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+  moc_KDyna.cpp
   moc_SettingDialog.cpp
+  moc_KFileEdtitor.cpp
+cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+  moc_ItemDialog.cpp
   SurfaceDyna.vcxproj -> E:\Repository\SurfaceDyna\x64\Release\SurfaceDyna.exe

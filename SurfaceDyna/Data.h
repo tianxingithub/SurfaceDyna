@@ -23,7 +23,8 @@ public:
 	//! 树节点对应的批注
 	QList<QString>* rootOrder_notes;
 
-
+	//! 树节点在TextBrowser中对应的行号
+	QList<int> rootOrder_lines;
 
 	//! 打开的文件名称
 	QString filename;

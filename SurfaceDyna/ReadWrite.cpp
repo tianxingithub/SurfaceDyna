@@ -124,6 +124,7 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 		}
 	}
 
+
 	txtOutput << "*END" << endl;
 
 	f.close();
