@@ -10,6 +10,7 @@
 #include "DynaFrame.h"
 #include "Data.h"
 #include <QWindow>
+#include <QMessageBox>
 
 
 KFileEdtitor::KFileEdtitor(QWidget *parent)
@@ -17,6 +18,8 @@ KFileEdtitor::KFileEdtitor(QWidget *parent)
     , ui(new Ui::KFileEdtitorClass())
 {
     ui->setupUi(this);
+    setBtnsSize();
+
 
 	m_fileRW = new ReadWrite();
 	m_data = nullptr;
@@ -30,7 +33,7 @@ KFileEdtitor::KFileEdtitor(QWidget *parent)
 
     m_displayWidget = new DisplayWidget(ui->centralWidget);
     m_displayWidget->setMinimumSize(600, 500);
-	ui->horizontalLayout->addWidget(m_displayWidget);
+	ui->horizontalLayout_4->addWidget(m_displayWidget);
 
     m_translator = nullptr;
     auto tsPath = m_settingDialg->m_TsPath;
@@ -46,18 +49,38 @@ KFileEdtitor::~KFileEdtitor()
 
 void KFileEdtitor::addPlot()
 {
+	connect(ui->btnOpen, &QPushButton::clicked, this, &KFileEdtitor::getData);
+	connect(ui->btnSave, &QPushButton::clicked, this, &KFileEdtitor::exportData);
+	connect(ui->btnSetting, &QPushButton::clicked, this, &KFileEdtitor::settingSlot);
+	connect(ui->btnOpenDyna, &QPushButton::clicked, this, &KFileEdtitor::openDynaSlot);
+
+//     connect(ui->actionOpen, &QAction::triggered, this, &KFileEdtitor::getData);
+//     connect(ui->actionSave, &QAction::triggered, this, &KFileEdtitor::exportData);
+// 	connect(ui->actionSetting, &QAction::triggered, this, &KFileEdtitor::settingSlot);
+// 	connect(ui->actionOpenDyna, &QAction::triggered, this, &KFileEdtitor::openDynaSlot);
+// 	connect(ui->actionDynaClose, &QAction::triggered, this, &KFileEdtitor::closeDynaSlot);
+
 	connect(m_fileRW, &ReadWrite::readFinishedSig, this, &KFileEdtitor::readOverSlot);
-	connect(ui->actionSetting, &QAction::triggered, this, &KFileEdtitor::settingSlot);
-	connect(ui->actionOpenDyna, &QAction::triggered, this, &KFileEdtitor::openDynaSlot);
-	connect(ui->actionDynaClose, &QAction::triggered, this, &KFileEdtitor::closeDynaSlot);
-
-
-    connect(ui->actionOpen, &QAction::triggered, this, &KFileEdtitor::getData);
-    connect(ui->actionSave, &QAction::triggered, this, &KFileEdtitor::exportData);
     connect(m_treeWidget->treeItem, &QTreeWidget::doubleClicked, this, &KFileEdtitor::treeViewDoubleClickSlot);
     connect(m_treeWidget->treeItem, &QTreeWidget::clicked, this, &KFileEdtitor::treeViewClickSlot);
 
+    //connect(ui->menuSlot, &QMenu::triggered, this, &KFileEdtitor::menuTestSlot);
+}
 
+void KFileEdtitor::setBtnsSize()
+{
+    ui->btnOpen->setFixedSize(32, 32);
+    ui->btnOpen->setIcon(QIcon(("./images/open-kdyna.ico")));
+
+
+    ui->btnSave->setFixedSize(32, 32);
+    ui->btnSave->setIcon(QIcon("./images/export-kdyna.ico"));
+
+    ui->btnSetting->setFixedSize(32, 32);
+    ui->btnSetting->setIcon(QIcon("./images/setting-kdyna.ico"));
+
+    ui->btnOpenDyna->setFixedSize(32, 32);
+    ui->btnOpenDyna->setIcon(QIcon("./images/dyna.ico"));
 }
 
 void KFileEdtitor::funDemoSlot()
@@ -100,7 +123,10 @@ void KFileEdtitor::exportData()
 		this->m_data = obj->data;
 	}
     if (m_data == nullptr)
-        return;
+    {
+        QMessageBox::information(this, u8"错误", u8"未打开文件！");
+		return;
+    }
     QString filepath = QFileDialog::getSaveFileName(this, u8"保存K文件",
         ".",
         "k files (*.k);;all files(*.*)");
@@ -221,6 +247,11 @@ void KFileEdtitor::closeDynaSlot()
 
 }
 
+
+void KFileEdtitor::menuTestSlot()
+{
+    qDebug() << "menuSlot()";
+}
 
 void KFileEdtitor::treeViewDoubleClickSlot()
 {

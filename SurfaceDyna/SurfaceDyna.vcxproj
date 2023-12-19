@@ -111,6 +111,7 @@
     <ClCompile Include="DisplayWidget.cpp" />
     <ClCompile Include="DynaFrame.cpp" />
     <ClCompile Include="ItemDialog.cpp" />
+    <ClCompile Include="KDyna.cpp" />
     <ClCompile Include="KFileEdtitor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ReadThread.cpp" />
@@ -123,6 +124,7 @@
     <QtUic Include="DisplayWidget.ui" />
     <QtUic Include="DynaFrame.ui" />
     <QtUic Include="ItemDialog.ui" />
+    <QtUic Include="KDyna.ui" />
     <QtUic Include="KFileEdtitor.ui" />
     <QtUic Include="SettingDialog.ui" />
     <QtUic Include="TreeWidget.ui" />
@@ -136,6 +138,7 @@
   <ItemGroup>
     <ClInclude Include="CoreGlobal.h" />
     <ClInclude Include="Data.h" />
+    <QtMoc Include="KDyna.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="Translator.h" />

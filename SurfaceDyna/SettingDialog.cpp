@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QSettings>
 #include <QFileDialog>
+#include <QMessageBox>
 
 SettingDialog::SettingDialog(QWidget* parent /*= nullptr*/)
 	: QDialog(parent)
@@ -14,6 +15,7 @@ SettingDialog::SettingDialog(QWidget* parent /*= nullptr*/)
 	connect(ui->btnTs, &QPushButton::clicked, this, &SettingDialog::tsPathSlot);
 	connect(ui->btnDyna, &QPushButton::clicked, this, &SettingDialog::dynaPathSlot);
 	connect(ui->btnFrameName, &QPushButton::clicked, this, &SettingDialog::frameSlot);
+	connect(ui->btnClose, &QPushButton::clicked, this, &SettingDialog::closeSlot);
 	QString configpath = "./setting/config.ini";
 	m_settings = new QSettings(configpath, QSettings::IniFormat);
 
@@ -48,7 +50,12 @@ void SettingDialog::dynaPathSlot()
 		this, u8"选择Manager文件",
 		".",
 		"exe files (*.exe);;All files (*.*)");
-	if (dypath == "") return;
+	if (dypath == "")
+	{
+		QMessageBox::information(this, u8"错误", u8"选择Manager.exe失败！");
+
+		return;
+	}
 	ui->editDynaPath->setText(dypath);
 	m_settings->setValue("DynaPath", dypath);
 	m_settings->sync();
@@ -57,9 +64,32 @@ void SettingDialog::dynaPathSlot()
 void SettingDialog::frameSlot()
 {
 	auto fNmae = ui->editFrameName->text();
+	if (fNmae == "")
+	{
+		QMessageBox::information(this, u8"错误", u8"未写入窗体名称！");
+		return;
+	}
+
+	QMessageBox::information(this, u8"提示", u8"窗体名称已保存！");
 
 	m_settings->setValue("FrameName", fNmae);
 	m_settings->sync();
+}
+
+void SettingDialog::closeSlot()
+{
+	auto fNmae = ui->editFrameName->text();
+	if (fNmae == "")
+	{
+		QMessageBox::information(this, u8"错误", u8"未写入窗体名称！");
+		return;
+	}
+	m_settings->setValue("FrameName", fNmae);
+	m_settings->sync();
+
+
+	this->close();
+
 }
 
 void SettingDialog::freshPath()

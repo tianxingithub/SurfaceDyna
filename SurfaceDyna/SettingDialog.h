@@ -29,6 +29,7 @@ private:
 	void tsPathSlot();
 	void dynaPathSlot();
 	void frameSlot();
+	void closeSlot();
 public:
 	void freshPath();
 };

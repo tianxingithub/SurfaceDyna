@@ -29,6 +29,7 @@ public:
     KFileEdtitor(QWidget *parent = nullptr);
     ~KFileEdtitor();
     void addPlot();
+    void setBtnsSize();
 
 private:
     //! 得到解析后的数据
@@ -72,6 +73,8 @@ public:
 
     void openDynaSlot();
     void closeDynaSlot();
+
+    void menuTestSlot();
 
 private:
     //! 文件节点树

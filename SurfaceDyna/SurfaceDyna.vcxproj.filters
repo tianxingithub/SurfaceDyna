@@ -58,6 +58,9 @@
     <QtMoc Include="SettingDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="KDyna.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BTExternalProgramEditor.cpp">
@@ -99,6 +102,9 @@
     <ClCompile Include="TreeWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KDyna.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="DisplayWidget.ui">
@@ -117,6 +123,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="TreeWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="KDyna.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
