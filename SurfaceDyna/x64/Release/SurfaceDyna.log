@@ -1,3 +1,8 @@
 ﻿cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
+  KFileEdtitor.cpp
+  ReadThread.cpp
+cl : 命令行 warning D9002: 忽略未知选项“-Zc:__cplusplus”
   ReadWrite.cpp
   SurfaceDyna.vcxproj -> E:\Repository\SurfaceDyna\x64\Release\SurfaceDyna.exe
