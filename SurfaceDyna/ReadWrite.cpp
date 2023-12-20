@@ -44,19 +44,24 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 	QString titleInfo = u8"$# 激发仿真软件研发支撑服务平台导出k文件信息";
 	txtOutput << titleInfo << endl;
 
-	auto fileLines = data->getfileLines();
-
 	//! 树节点顺序
 	auto node1 = data->rootOrder;
 
 	//! 节点对应的批注
 	auto notes = data->rootOrder_notes;
-	
+
+
+	//! 原始文件数据行
+	QStringList fileLines = data->getfileLines();
+
+	//! 新文件数据行
+	QString modifyLines;
 	//! 开始遍历树节点
 	for (auto n1 : *node1)
 	{
 		auto n = n1.mid(0, n1.length() - 5);
-		txtOutput << "*"+n1.mid(0,n1.length()-5) << endl;
+		//txtOutput << "*"+n1.mid(0,n1.length()-5) << endl;
+		modifyLines = modifyLines + ("*" + n1.mid(0, n1.length() - 5)) + '\n';
 		
 		// 写入节点批注
 		auto item_index = data->rootOrder->indexOf(n1);
@@ -66,7 +71,8 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 		notes.replace('\n', "\n$");
 		if (notes != "")
 		{
-			txtOutput << "$" << notes << endl;
+			//txtOutput << "$" << notes << endl;
+			modifyLines = modifyLines + "$" + notes + '\n';
 
 		}
 
@@ -90,43 +96,114 @@ void ReadWrite::writeDataRoot(QString filepath, Data* data)
 			{
 				if (count == 0)
 				{
-					txtOutput << "$"<< k.rightJustified(space - 1, ' ');
+					//txtOutput << "$"<< k.rightJustified(space - 1, ' ');
+					modifyLines = modifyLines + "$" + k.rightJustified(space - 1, ' ');
 					count++;
 				}
 				else
 				{
 					if (k.mid(0, 6) == "unused")
 					{
-						txtOutput << k.rightJustified((8-count)*10, ' ');
+						//txtOutput << k.rightJustified((8-count)*10, ' ');
+						modifyLines = modifyLines + k.rightJustified((8-count)*10, ' ');
 					}
 					else
 					{
-						txtOutput << k.rightJustified(space, ' ');
+						//txtOutput << k.rightJustified(space, ' ');
+						modifyLines = modifyLines + k.rightJustified(space, ' ');
 						count++;
 					}						
 				}
 			}
-			txtOutput << endl;
+			//txtOutput << endl;
+			modifyLines = modifyLines + '\n';
 			count = 0;
 			for (int i = 0; i < row.size(); i++)
 			{
 				if (krows[rcount][i] == "unused")
 				{
-					txtOutput <<  vrows[rcount][i].rightJustified((8 - count) * 10, ' ');
+					//txtOutput <<  vrows[rcount][i].rightJustified((8 - count) * 10, ' ');
+					modifyLines = modifyLines + vrows[rcount][i].rightJustified((8 - count) * 10, ' ');
 				}
 				else
 				{
-					txtOutput << vrows[rcount][i].rightJustified(space, ' ');
+					//txtOutput << vrows[rcount][i].rightJustified(space, ' ');
+					modifyLines = modifyLines + vrows[rcount][i].rightJustified(space, ' ');
 					count++;
 				}					
 			}
-			txtOutput << endl;
+			//txtOutput << endl;
+			modifyLines = modifyLines + '\n';
 			rcount++;
 		}
 	}
+	// 导出数据的节点信息
+	QStringList modifyLineList = modifyLines.split('\n');
+
+	//**********************************************************************************************
+	// 两个数据的行号索引
+	int oldLineIndex = 0, newLineIndex = 0;
+	int oldCount = fileLines.size();
+	int newCount = modifyLineList.size();
+
+	for (int oldLineIndex = 1; oldLineIndex < oldCount;)
+	{
+		auto oldLine = fileLines[oldLineIndex];
+		if (oldLine[0] == "*") // 定位*开头的节点
+		{
+			auto newLine = modifyLineList[newLineIndex];
+			if (oldLine == newLine) // 如果原始文件节点与新文件节点一致，则写入新文件节点
+			{
+				txtOutput << newLine << endl;
+				newLineIndex++;
+				newLine = modifyLineList[newLineIndex];
+
+				// 写入新结节的数据
+				while (newLine[0] != "*" )
+				{
+					txtOutput << newLine << endl;
+					newLineIndex++;
+					if (newLineIndex == newCount)
+					{
+						newLineIndex--;
+						break;
+					}
+					newLine = modifyLineList[newLineIndex];
+				}
+
+				// 找到旧数据的行
+				oldLineIndex++;
+				oldLine = fileLines[oldLineIndex];
+				while (oldLine[0] != "*")
+				{
+					oldLineIndex++;
+					oldLine = fileLines[oldLineIndex];
+				}
+			}
+			else
+			{
+				txtOutput << oldLine << endl;
+				oldLineIndex++;
+			}
+
+		}
+		else
+		{
+			txtOutput << oldLine << endl;
+			oldLineIndex++;
+		}
+
+	}
 
 
-	txtOutput << "*END" << endl;
+	//*********************************************************************************************
+// 	for (auto l : modifyLineList)
+// 		txtOutput << l << endl;
+// 	txtOutput << "*END" << endl;
+// 
+// 	txtOutput << "*******************************" << endl;
+// 	for (auto l : fileLines)
+// 		txtOutput << l << endl;
 
 	f.close();
 

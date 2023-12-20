@@ -74,7 +74,8 @@ void ReadThread::run()
 		QString str(line);
 
 		str.remove("\n");
-
+		if(str=="")
+			continue;
 		//! ÅÐ¶ÏÑ¡Ïî¿¨
 		if (str.at(0) == '*')
 		{
